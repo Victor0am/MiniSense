@@ -1,5 +1,5 @@
 {
-  "name": "MiniSense",
+  "name": "mini-sense",
   "version": "1.0.0",
   "description": "Um produto na área de Internet das Coisas (IoT) e Sensoreamento Remoto está sendo desenvolvido. Trata-se de um serviço para **gerenciar** o estado de dispositivos IoT instalados pelos clientes e **alertar**, através de um aplicativo, sobre situações ou emergências condicionadas aos objetos, mercadorias, ou locais monitorados por esses sensores.",
   "main": "index.js",
