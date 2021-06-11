@@ -4,8 +4,9 @@ import { Knex } from 'knex';
 
 export async function up(knex: Knex) {
     return knex.schema.createTable('sensorDevices', table => {
-        table.string('key').primary();
-        table.string('user_email').references('email').inTable('users').onDelete('CASCADE');
+        table.increments('id').primary();
+        table.string('key').notNullable();
+        table.string('user_id').references('id').inTable('users').onDelete('CASCADE');
         table.string('label').notNullable();
         table.string('description').notNullable();
     });

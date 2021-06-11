@@ -4,7 +4,8 @@ import { Knex } from 'knex';
 
 export async function up(knex: Knex) {
     return knex.schema.createTable('measurementUnits', table => {
-        table.string('symbol').primary();
+        table.increments('id').primary();
+        table.string('symbol').notNullable();
         table.string('description').notNullable();
     });
 };

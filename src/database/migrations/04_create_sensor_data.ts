@@ -4,10 +4,11 @@ import { Knex } from 'knex';
 
 export async function up(knex: Knex) {
     return knex.schema.createTable('sensorData', table => {
-        table.dateTime('timestamp').defaultTo(knex.fn.now()).primary();
-        table.string('data_key').references('key').inTable('dataStreams').notNullable().onDelete('CASCADE');
+        table.increments('id').primary();
+        table.dateTime('timestamp').defaultTo(knex.fn.now()).notNullable();
+        table.string('data_id').references('id').inTable('dataStreams').notNullable().onDelete('CASCADE');
         table.double('value').notNullable();
-        table.string('unit_symbol').references('symbol').inTable('measurementUnits').notNullable();
+        table.string('unit_id').references('id').inTable('measurementUnits').notNullable();
     });
 };
 
