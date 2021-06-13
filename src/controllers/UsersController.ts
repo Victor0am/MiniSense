@@ -6,6 +6,11 @@ export interface User {
     email: string;
     username: string;
 }
+export interface BDUser {
+    id: number;
+    email: string;
+    username: string;
+}
 
 class UserController {
 
@@ -34,8 +39,8 @@ class UserController {
         if (!username || !email) return res.status(400).send('Está faltando algum dos dados...');
         const existent = await connection('users').where('email', email).first();
         if (existent) return res.status(409).send(`Usuário cadastrado com email ${email} já existe`);
-        await connection('users').insert({ email, username });
-        return res.send('Usuário criado com sucesso!');
+        const createdUser = await connection<BDUser>('users').insert({ email, username });
+        return res.json({id:createdUser[0], email, username});
     }
 
     async remove(req: Request, res: Response) {
@@ -45,8 +50,6 @@ class UserController {
         existent = await connection('users').where('email', email).first();
         if (existent.email !== email) return res.status(404).send('Email não cadastrado.');
         await connection('users').where('email', email).delete(); //deleta o usuário mas deixa as coisas relacionadas a ele no banco
-        const sensorDevicesList = await connection<UserDevice[]>('sensorDevices').where('user_email', existent.email);
-        await connection('sensorDevices').where('user_email', existent.email).delete();//deleta os dispositivos
 
         return res.send('Usuário deletado com sucesso!')
     }

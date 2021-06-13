@@ -1,13 +1,21 @@
 import { Request, Response } from 'express';
 import connection from '../database/connections';
 import { SensorDevice } from './SensorDevicesController'
+import keyGen from '../utils/keyGen';
 
 export interface DataStream {
+    oid:number;
     key: string;
-    device_key: string;
     label: string;
+    unitId:number;
+    deviceId: number;
     enabled?: boolean;
-    unit_symbol: string;
+    measurementCount: number;
+    measurements?: Measurement[]; 
+}
+interface Measurement{
+    timestamp: Date;
+    value: number;
 }
 interface DeviceData {
     key: string;
@@ -15,24 +23,40 @@ interface DeviceData {
     enabled: boolean;
     unit_symbol: string;
 }
-
+interface StreamRequest {
+    label: string;
+    unitId: number;
+}
 class DataStreamsController {
 
-    async changeEnabled(req: Request, res: Response) {
-        const key = <string>req.body;
+
+    async showStream(req:Request, res: Response){
+        const key = <string>req.params.key;
         if (!key) return res.status(400);
-        let existent = await connection<DataStream>('dataStreams').where('key', key).first();
-        if (existent?.key !== key) return res.status(404).send('Chave não encontrada');
-        await connection('dataStreams').where('key', key).update('enabled', !existent.enabled);
+        let dataStream = await connection<DataStream>('dataStreams').where('key', key).first();
+        console.log(dataStream);
+        console.log(key);
+        if (dataStream?.key !== key) return res.status(404).send('Chave não encontrada');
+        let measurements = await connection<Measurement>('sensorData').where('dataId', dataStream.oid).orderBy('id', "desc");
+        dataStream.measurements = measurements;
+        return res.json(dataStream);
+    }
+
+    async changeEnabled(req: Request, res: Response) {
+        const key = <string>req.params.key;
+        if (!key) return res.status(400);
+        let dataStream = await connection<DataStream>('dataStreams').where('key', key).first();
+        if (dataStream?.key !== key) return res.status(404).send('Chave não encontrada');
+        await connection('dataStreams').where('key', key).update('enabled', !dataStream.enabled);
         return res.send('Habilitação mudada');
     }
 
     async showDevices(req: Request, res: Response) {
-        const device_key = <string>req.body;
-        if (!device_key) return res.status(400);
-        let existent = await connection<SensorDevice>('sensorDevices').where('key', device_key).first();
-        if (existent?.key !== device_key) return res.status(404).send('Chave não encontrada');
-        let devicesList = await connection<DeviceData[]>('dataStreams').distinct().where('device_key', device_key);
+        const deviceId = <string>req.body;
+        if (!deviceId) return res.status(400);
+        let existent = await connection<SensorDevice>('sensorDevices').where('key', deviceId).first();
+        if (existent?.key !== deviceId) return res.status(404).send('Chave não encontrada');
+        let devicesList = await connection<DeviceData[]>('dataStreams').distinct().where('deviceId', deviceId);
         return res.json(devicesList);
 
     }
@@ -48,14 +72,15 @@ class DataStreamsController {
     }
 
     async create(req: Request, res: Response) {
-        let { key, device_key, label, enabled, unit_symbol } = <DataStream>req.body;
-        if (!key || !device_key || !label || unit_symbol) return res.status(400).send('Estão faltando dados');
-        if (enabled === undefined) enabled = false;
-        let existent = <DataStream>{};
-        existent = await connection('dataStreams').where('key', key).first();
-        if (existent.key === key) return res.status(409).send(`O DataStream com a chave ${key} já está registrado`);
-        await connection('dataStreams').insert({ key, device_key, label, enabled, unit_symbol });
-        return res.send('DataStream cadastrado com sucesso');
+        const deviceKey = <string>req.params.deviceKey;
+        let { label, unitId } = <DataStream>req.body;
+        if (!deviceKey || !label || !unitId) return res.status(400).send('Estão faltando dados');
+        const enabled = true;
+        const key = keyGen();
+        const existingDevice = await connection<SensorDevice>('sensorDevices').where('key', deviceKey).first();
+        if(existingDevice?.key !== deviceKey) return res.status(404).send('Dispositivo não encontrado.');
+        const createdStream = await connection('dataStreams').insert({ key, deviceId: existingDevice.id, label, enabled, unitId });
+        return res.json({ id:createdStream[0], key, label, unitId, deviceId:existingDevice.id, measurementCount:0 });
     }
 }
 

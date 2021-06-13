@@ -5,10 +5,10 @@ import { Knex } from 'knex';
 export async function up(knex: Knex) {
     return knex.schema.createTable('sensorData', table => {
         table.increments('id').primary();
-        table.dateTime('timestamp').defaultTo(knex.fn.now()).notNullable();
-        table.string('data_id').references('id').inTable('dataStreams').notNullable().onDelete('CASCADE');
+        table.string('timestamp').notNullable();
+        table.string('dataId').references('oid').inTable('dataStreams').notNullable().onDelete('CASCADE');
         table.double('value').notNullable();
-        table.string('unit_id').references('id').inTable('measurementUnits').notNullable();
+        table.string('unitId').references('id').inTable('measurementUnits').notNullable();
     });
 };
 

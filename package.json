@@ -4,7 +4,7 @@
   "description": "Um produto na área de Internet das Coisas (IoT) e Sensoreamento Remoto está sendo desenvolvido. Trata-se de um serviço para **gerenciar** o estado de dispositivos IoT instalados pelos clientes e **alertar**, através de um aplicativo, sobre situações ou emergências condicionadas aos objetos, mercadorias, ou locais monitorados por esses sensores.",
   "main": "index.js",
   "scripts": {
-    "dev": "ts-node-dev --transpileOnly --ignore-watch node_modules src/server.ts",
+    "dev": "ts-node-dev --ignore-watch node_modules src/app.ts",
     "knex:migrate": "knex --knexfile knexfile.ts migrate:latest",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -20,6 +20,8 @@
   },
   "homepage": "https://github.com/Victor0am/MiniSense#readme",
   "devDependencies": {
+    "@types/crypto-js": "^4.0.1",
+    "ts-node-dev": "^1.1.6",
     "tslint": "^6.1.3",
     "typescript": "^4.3.2"
   },
