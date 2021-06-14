@@ -4,7 +4,7 @@ Um produto na área de Internet das Coisas (IoT) e Sensoreamento Remoto está se
 
 Por exemplo, um cliente pode ser alertado através de seu smartphone sobre o superaquecimento de um equipamento ou produto sensível que estava sendo monitorado através de um sensor previamente instalado e conectado ao serviço. Ao adquirir um sensor compatível com o serviço e instalá-lo, é possível associá-lo à conta de usuário do dono, assim, ele estará disponível no dashboard do app para acompanhamento, sendo informado de quais tipos de dados estão sendo monitorados e seus valores medidos mais recentes. Em outra área do app (fora do escopo deste cenário) seria possível configurar alertas combinando condições sobre os valores medidos, ex: alertar usuário quando a temperatura do  sensor `985bf2cde9b54a54b8fcd3423d89ad89` (rotulado como Freezer do depósito) ultrapassar -4 ºC.
 
-## [API](https://app.swaggerhub.com/apis/Victor0am/MiniSense/1.0.0)
+## [API](https://app.swaggerhub.com/apis-docs/Victor0am/MiniSense/1.0.0)
 
 ## Regras e Modelagem de Domínio
 
